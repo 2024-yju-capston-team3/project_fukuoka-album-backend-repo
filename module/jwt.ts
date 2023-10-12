@@ -7,11 +7,17 @@ import {
 } from '../config/secretkey';
 
 export const JWT = {
-  // 토큰 발급
-  sign: async (email: string) => {
+  /** 토큰 발급 */
+  sign: async (email: string, isRefresh?: boolean) => {
     const payload = {
       email
     };
+
+    if (isRefresh) {
+      return {
+        accessToken: jwt.sign(payload, AccessSecretKey, AccessTokenoption),
+      };
+    }
 
     const token = {
       accessToken: jwt.sign(payload, AccessSecretKey, AccessTokenoption),
@@ -20,13 +26,19 @@ export const JWT = {
 
     return token;
   },
-  // 토큰 인증
-  verify: async (token: string) => {
+
+  /** 토큰 인증 */
+  verify: (token: string, isRefresh?: boolean) => {
+    let isVerify = true;
+    const secretKey = isRefresh ? RefreshSecretKey : AccessSecretKey 
+    
     try {
-      const decoded = jwt.verify(token, AccessSecretKey);
-      return decoded;
-    } catch (err) {
-      console.log(err);
+      jwt.verify(token, secretKey);
+    } catch (error) {
+      console.log(error);
+      isVerify = false;
     }
+
+    return isVerify;
   }
 }
