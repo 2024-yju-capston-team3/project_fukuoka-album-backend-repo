@@ -1,8 +1,20 @@
 import multer, { diskStorage } from "multer";
 import fs from "fs";
 import { UnprocessableEntityException } from "../util/exception";
+const supportedMediaType = ["jpg", "jpeg", "png"];
 
 const upload = multer({
+	fileFilter: (req, file, callback) => {
+		const fileType = file.mimetype.split("/")[1];
+
+		const isSupportedMediaType = supportedMediaType.includes(fileType);
+
+		if (isSupportedMediaType) {
+			callback(null, true);
+		} else {
+			callback(null, false);
+		}
+	},
 	storage: diskStorage({
 		destination: (req, file, callback) => {
 			const area = req.params?.area;
