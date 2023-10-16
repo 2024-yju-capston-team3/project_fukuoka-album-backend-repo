@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { asyncWrapper } from "../util/asyncWrapper";
 import { HttpException } from "../util/response";
-import { verify } from "../controller/auth";
+import { verify } from "../controller/authController";
 
 export const authMiddleware = (isRefresh?: boolean) =>
 	asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
