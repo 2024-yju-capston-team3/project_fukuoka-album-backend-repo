@@ -1,6 +1,7 @@
 import { JWT } from "../module/jwt";
 import { Request } from "express";
-import { Created, Enprocessable } from "../util/response";
+import { Created } from "../util/response";
+import { UnprocessableEntityException } from "../util/exception";
 
 interface GoogleUser {
 	email: string;
@@ -53,7 +54,7 @@ const getUser = async (googleUser: GoogleUser) => {
 /** 구글 유저 정보를 이용해 jwt 발급 */
 export const signIn = async (credential: string | undefined) => {
 	if (!credential) {
-		return Enprocessable("토큰이 없습니다.");
+		throw new UnprocessableEntityException("토큰이 없습니다.");
 	}
 	// 유저 정보 가져오기
 	const googleUser = decodeBase64(credential);

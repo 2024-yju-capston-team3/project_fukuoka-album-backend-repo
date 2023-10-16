@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { asyncWrapper } from "../util/asyncWrapper";
-import { HttpException } from "../util/response";
+import { UnprocessableEntityException } from "../util/exception";
 import { verify } from "../controller/authController";
 
 export const authMiddleware = (isRefresh?: boolean) =>
@@ -10,7 +10,7 @@ export const authMiddleware = (isRefresh?: boolean) =>
 			: req.headers?.authorization;
 
 		if (!token) {
-			throw new HttpException(422, "인증할 수 없습니다.");
+			throw new UnprocessableEntityException("토큰이 없습니다.");
 		}
 
 		verify(token, isRefresh);

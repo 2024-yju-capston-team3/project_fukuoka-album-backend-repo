@@ -5,7 +5,7 @@ import {
 	AccessTokenoption,
 	RefreshTokenoption,
 } from "../config/secretkey";
-import { HttpException } from "../util/response";
+import { GoneException, UnauthorizeException } from "../util/exception";
 
 export const JWT = {
 	/** 토큰 발급 */
@@ -37,9 +37,9 @@ export const JWT = {
 		} catch (error) {
 			console.log(error);
 			if (error instanceof TokenExpiredError) {
-				throw new HttpException(410, "유효 기간이 지난 토큰입니다.");
+				throw new GoneException("유효 기간이 지난 토큰입니다.");
 			}
-			throw new HttpException(401, "권한이 없습니다.");
+			throw new UnauthorizeException("권한이 없습니다.");
 		}
 
 		return true;
