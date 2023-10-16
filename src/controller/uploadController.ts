@@ -1,4 +1,7 @@
-import { InternalServerErrorException } from "../util/exception";
+import {
+	InternalServerErrorException,
+	UnSupportedMediaTypeException,
+} from "../util/exception";
 import { fetchToDB } from "../util/jsonServerRequest";
 import { Created } from "../util/response";
 import fs from "fs";
@@ -7,6 +10,12 @@ const TIME_SET = 1 * 60 * 60 * 1000;
 
 /** 임시 저장소 저장 */
 export const storeTempImage = async (tempPath: string) => {
+	const isNotSupportedType = tempPath === "undefined/undefined";
+
+	if (isNotSupportedType) {
+		throw new UnSupportedMediaTypeException();
+	}
+
 	try {
 		const res = await fetchToDB("POST", "tempImage", {
 			path: tempPath,
