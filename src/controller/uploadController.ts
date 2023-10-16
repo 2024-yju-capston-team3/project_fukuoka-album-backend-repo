@@ -15,17 +15,32 @@ export const storeTempImage = async (tempPath: string) => {
 	if (isNotSupportedType) {
 		throw new UnSupportedMediaTypeException();
 	}
-
 	try {
+		// 백엔드 입장에서의 경로: ../project_fukuoka-album-deployment-repo/public/img/...
+		// 프론트 입장에서의 경로: img/...
+
+		const pathForFrontend = tempPath.split("public/")[1];
+		const isUser = pathForFrontend.split("img/")[1].split("/")[0] === "user";
+
+		// 유저라면 temp 에 저장 안함
+		if (isUser) {
+			return Created("이미지 저장 완료", {
+				path: pathForFrontend,
+			});
+		}
+
 		const res = await fetchToDB("POST", "tempImage", {
 			path: tempPath,
+			pathF: pathForFrontend,
 		});
 
 		const {
 			path,
 			id,
+			pathF,
 		}: {
 			path: string;
+			pathF: string;
 			id: number;
 		} = await res.json();
 
@@ -33,7 +48,7 @@ export const storeTempImage = async (tempPath: string) => {
 		asyncDelete(path, id);
 
 		// 경로 리턴
-		return Created("이미지 저장 완료", { path, id });
+		return Created("이미지 저장 완료", { path, id, pathF });
 	} catch (error) {
 		console.log(error);
 		throw new InternalServerErrorException();
@@ -66,10 +81,11 @@ const asyncDelete = async (path: string, id: number) => {
 };
 
 /** 스토리지 삭제 */
-const deleteImagefromStorage = (paths: string[]) => {
+export const deleteImagefromStorage = (paths: string[]) => {
 	paths.forEach((path) => {
+		const realPath = `../project_fukuoka-album-deployment-repo/public/${path}`;
 		try {
-			fs.unlinkSync(`${path}`);
+			fs.unlinkSync(`${realPath}`);
 		} catch (error) {
 			console.log(error);
 		}
