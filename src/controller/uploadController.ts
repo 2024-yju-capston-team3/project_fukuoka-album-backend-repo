@@ -8,7 +8,6 @@ const TIME_SET = 1 * 60 * 60 * 1000;
 /** 임시 저장소 저장 */
 export const storeTempImage = async (tempPath: string) => {
 	try {
-		// db 임시 저장소 저장
 		const res = await fetchToDB("POST", "tempImage", {
 			path: tempPath,
 		});
@@ -21,7 +20,7 @@ export const storeTempImage = async (tempPath: string) => {
 			id: number;
 		} = await res.json();
 
-		// 1시간 뒤 체크 및 삭제
+		// 체크 및 삭제
 		asyncDelete(path, id);
 
 		// 경로 리턴
@@ -35,14 +34,11 @@ export const storeTempImage = async (tempPath: string) => {
 /** 사용되지 않은 image 삭제 */
 const asyncDelete = async (path: string, id: number) => {
 	try {
-		// 3. 5시간 뒤에 이미지를 조회하여 남아있다면 해당 이미지 삭제
 		setTimeout(async () => {
-			// 2. 이미지가 tempImage 테이블 안에 있는 경우 삭제
 			const response = await fetchToDB("GET", `tempImage?path=${path}`);
 
-			// 스토리지 삭제
+			// 이미지가 tempImage 테이블 안에 있는 경우 스토리지에서 삭제
 			if (response.ok) {
-				// 이미지가 존재하면 삭제
 				deleteImagefromStorage([path]);
 			}
 
