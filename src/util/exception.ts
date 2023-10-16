@@ -48,3 +48,14 @@ export class UnprocessableEntityException extends Error {
 		this.message = message;
 	}
 }
+
+export class UnSupportedMediaTypeException extends Error {
+	status: number;
+	message: string;
+
+	constructor(message: string = "지원하지 않는 미디어 타입입니다.") {
+		super(message);
+		this.status = 415;
+		this.message = message;
+	}
+}
