@@ -1,12 +1,25 @@
 import multer, { diskStorage } from "multer";
 import fs from "fs";
 import { UnprocessableEntityException } from "../util/exception";
+import { generate } from "shortid";
+const supportedMediaType = ["jpg", "jpeg", "png"];
 
 const upload = multer({
+	fileFilter: (req, file, callback) => {
+		const fileType = file.mimetype.split("/")[1];
+
+		const isSupportedMediaType = supportedMediaType.includes(fileType);
+
+		if (isSupportedMediaType) {
+			callback(null, true);
+		} else {
+			callback(null, false);
+		}
+	},
 	storage: diskStorage({
 		destination: (req, file, callback) => {
 			const area = req.params?.area;
-			const directory = `../uploads/${area}`;
+			const directory = `../project_fukuoka-album-deployment-repo/public/img/${area}`;
 
 			if (!area) {
 				throw new UnprocessableEntityException("area 값이 없습니다.");
@@ -20,13 +33,8 @@ const upload = multer({
 			callback(null, directory);
 		},
 		filename: (req, file, callback) => {
-			const date = new Date();
-
-			const fileName = `${date.getUTCFullYear()}${
-				date.getUTCMonth() + 1
-			}${date.getUTCDate()}${date.getHours()}${date.getUTCMinutes()}${
-				file.originalname
-			}`;
+			const fileId = generate();
+			const fileName = `${fileId}`;
 
 			callback(null, fileName);
 		},
