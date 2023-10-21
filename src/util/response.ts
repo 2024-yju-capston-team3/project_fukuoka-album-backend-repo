@@ -1,18 +1,18 @@
-interface CustomResponse {
+export interface CustomResponse {
 	statusCode: number;
 	message: string;
 	data?: {};
 }
 
-export const OK = (message: string = "OK", data?: {}): CustomResponse => ({
+export const OK = (data?: {}, message: string = "OK"): CustomResponse => ({
 	statusCode: 200,
 	message,
 	data,
 });
 
 export const Created = (
-	message: string = "Created",
-	data?: {}
+	data?: {},
+	message: string = "Created"
 ): CustomResponse => ({
 	statusCode: 201,
 	message,
