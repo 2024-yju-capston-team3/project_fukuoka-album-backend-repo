@@ -1,7 +1,11 @@
 import { JWT } from "../module/jwt";
 import { Request } from "express";
-import { Created } from "../util/response";
-import { UnprocessableEntityException } from "../util/exception";
+import { Created, CustomResponse } from "../util/response";
+import {
+	InternalServerErrorException,
+	UnprocessableEntityException,
+} from "../util/exception";
+import { fetchToDB } from "../util/jsonServerRequest";
 
 interface GoogleUser {
 	email: string;
@@ -52,28 +56,28 @@ const getUser = async (googleUser: GoogleUser) => {
 };
 
 /** 구글 유저 정보를 이용해 jwt 발급 */
-export const signIn = async (credential: string | undefined) => {
+export const signIn = async (
+	credential: string | undefined
+): Promise<CustomResponse> => {
 	if (!credential) {
 		throw new UnprocessableEntityException("토큰이 없습니다.");
 	}
-	// 유저 정보 가져오기
-	const googleUser = decodeBase64(credential);
-	const user = await getUser(googleUser);
+	try {
+		// 유저 정보 가져오기
+		const googleUser = decodeBase64(credential);
+		const user = await getUser(googleUser);
 
-	const token = await JWT.sign(user.email);
+		const token = await JWT.sign(user.email);
 
-	return Created("토큰 발급", { ...user, token });
+		return Created({ ...user, token });
+	} catch (error) {
+		console.log(error);
+		throw new InternalServerErrorException();
+	}
 };
 
-/** token 확인 */
-export const verify = (token: string, isRefresh?: boolean) => {
-	return JWT.verify(token, isRefresh);
-};
+export const refresh = async (email: string): Promise<CustomResponse> => {
+	const newAccessToken = await JWT.sign(email, true);
 
-export const refresh = async (req: Request) => {
-	const email = req.body?.userInfo;
-
-	const token = await JWT.sign(email, true);
-
-	return Created("토큰 발급 성공", token);
+	return Created(newAccessToken);
 };

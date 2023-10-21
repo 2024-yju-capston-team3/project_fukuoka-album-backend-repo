@@ -2,14 +2,14 @@ import express, { Request, Response } from "express";
 import { deleteImagefromStorage } from "../controller/uploadController";
 import { asyncWrapper } from "../util/asyncWrapper";
 import { getUser, update } from "../controller/userController";
-import { authMiddleware } from "../middleware/authMiddleware";
+import { accessMiddleware } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
 export const User = () => {
 	router.get(
 		"/:id",
-		authMiddleware(),
+		accessMiddleware,
 		asyncWrapper(async (req: Request, res: Response) => {
 			const id = Number(req.params?.id);
 
@@ -21,7 +21,7 @@ export const User = () => {
 
 	router.put(
 		"/update",
-		authMiddleware(),
+		accessMiddleware,
 		asyncWrapper(async (req: Request, res: Response) => {
 			const { user, prevImage } = req.body;
 

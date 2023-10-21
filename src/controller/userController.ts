@@ -3,7 +3,7 @@ import {
 	UnprocessableEntityException,
 } from "../util/exception";
 import { fetchToDB } from "../util/jsonServerRequest";
-import { Created, OK } from "../util/response";
+import { Created, CustomResponse, OK } from "../util/response";
 
 interface User {
 	id: number;
@@ -13,19 +13,19 @@ interface User {
 	imageUrl: string;
 }
 
-export const getUser = async (id: number) => {
+export const getUser = async (id: number): Promise<CustomResponse> => {
 	if (!id) {
 		throw new UnprocessableEntityException();
 	}
+
 	const res = await fetchToDB("GET", `user/${id}`);
 
 	if (!res.ok) {
 		throw new InternalServerErrorException();
 	}
-
 	const data = await res.json();
 
-	return OK("", data);
+	return OK(data);
 };
 // 사진 등록
 
@@ -34,7 +34,7 @@ export const getUser = async (id: number) => {
  * 2. 기존 이미지 경로로 스토리지 삭제
  * 2. 있으면 지운다.
  */
-export const update = async (user: User) => {
+export const update = async (user: User): Promise<CustomResponse> => {
 	if (!user) {
 		throw new UnprocessableEntityException();
 	}
@@ -47,10 +47,5 @@ export const update = async (user: User) => {
 
 	const data = await res.json();
 
-	return Created("유저 수정 성공", data);
+	return Created(data);
 };
-//
-
-// 자기 소개 수정
-
-// 닉네임 수정?

@@ -21,6 +21,6 @@ export const fetchToDB = (
 ) => {
 	const options = fetchOptions(method, body);
 	const jsonServerUrl = `http://localhost:3004/${endpoint}`;
-	console.log(jsonServerUrl);
+
 	return fetch(jsonServerUrl, options);
 };
