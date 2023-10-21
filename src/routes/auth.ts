@@ -1,34 +1,34 @@
 import express, { Request, Response } from "express";
 import { refresh, signIn } from "../controller/authController";
-import { authMiddleware } from "../middleware/authMiddleware";
+import {
+	accessMiddleware,
+	refreshMiddleware,
+} from "../middleware/authMiddleware";
+import { asyncWrapper } from "../util/asyncWrapper";
 
 const router = express.Router();
 
 export const Auth = () => {
-	router.post("/", async (req: Request, res: Response) => {
-		const credential = req.body.userInfo;
+	router.post(
+		"/",
+		asyncWrapper(async (req: Request, res: Response) => {
+			const credential = req.body.userInfo;
 
-		const result = await signIn(credential);
+			const result = await signIn(credential);
 
-		res.status(result.statusCode).json(result);
-	});
-
-	router.get(
-		"/verify",
-		authMiddleware(),
-		async (req: Request, res: Response) => {
-			res.status(200).json("OK");
-		}
+			res.status(result.statusCode).json(result);
+		})
 	);
 
 	router.post(
 		"/refresh",
-		authMiddleware(true),
-		async (req: Request, res: Response) => {
-			const result = await refresh(req);
+		refreshMiddleware,
+		asyncWrapper(async (req: Request, res: Response) => {
+			const { userInfo } = req.body;
+			const result = await refresh(userInfo);
 
 			res.status(result.statusCode).json(result.data);
-		}
+		})
 	);
 
 	return router;
