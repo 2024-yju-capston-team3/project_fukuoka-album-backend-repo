@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import { config } from "dotenv";
 import cors from "cors";
 import { routes } from "./routes/index";
+import morgan from "morgan";
 config();
 
 const app: Express = express();
@@ -13,6 +14,7 @@ app.use(
 	})
 );
 
+app.use(morgan("dev"));
 app.use(express.json());
 
 routes(app);
