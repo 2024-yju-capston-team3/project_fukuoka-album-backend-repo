@@ -3,13 +3,15 @@ import {
 	UnSupportedMediaTypeException,
 } from "../util/exception";
 import { fetchToDB } from "../util/jsonServerRequest";
-import { Created } from "../util/response";
+import { Created, CustomResponse } from "../util/response";
 import fs from "fs";
 
 const TIME_SET = 1 * 60 * 60 * 1000;
 
 /** 임시 저장소 저장 */
-export const storeTempImage = async (tempPath: string) => {
+export const storeTempImage = async (
+	tempPath: string
+): Promise<CustomResponse> => {
 	const isNotSupportedType = tempPath === "undefined/undefined";
 
 	if (isNotSupportedType) {
@@ -24,7 +26,7 @@ export const storeTempImage = async (tempPath: string) => {
 
 		// 유저라면 temp 에 저장 안함
 		if (isUser) {
-			return Created("이미지 저장 완료", {
+			return Created({
 				path: pathForFrontend,
 			});
 		}
@@ -48,7 +50,7 @@ export const storeTempImage = async (tempPath: string) => {
 		asyncDelete(path, id);
 
 		// 경로 리턴
-		return Created("이미지 저장 완료", { path, id, pathF });
+		return Created({ path, id, pathF });
 	} catch (error) {
 		console.log(error);
 		throw new InternalServerErrorException();
@@ -77,6 +79,7 @@ const asyncDelete = async (path: string, id: number) => {
 		}, TIME_SET);
 	} catch (error) {
 		console.error("오류 발생:", error);
+		throw new InternalServerErrorException();
 	}
 };
 
