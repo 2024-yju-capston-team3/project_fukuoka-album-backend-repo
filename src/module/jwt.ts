@@ -1,4 +1,4 @@
-import jwt, { TokenExpiredError } from "jsonwebtoken";
+import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import {
 	AccessSecretKey,
 	RefreshSecretKey,
@@ -24,16 +24,31 @@ export const JWT = {
 			accessToken: jwt.sign(payload, AccessSecretKey, AccessTokenoption),
 			refreshToken: jwt.sign(payload, RefreshSecretKey, RefreshTokenoption),
 		};
-
 		return token;
 	},
 
 	/** 토큰 인증 */
-	verify: (token: string, isRefresh?: boolean) => {
-		const secretKey = isRefresh ? RefreshSecretKey : AccessSecretKey;
-
+	verify: (token: string) => {
 		try {
-			jwt.verify(token, secretKey);
+			jwt.verify(token, AccessSecretKey, AccessTokenoption);
+		} catch (error) {
+			console.log(`jwt 인증 오류: ${error}`);
+			if (error instanceof TokenExpiredError) {
+				throw new GoneException("유효 기간이 지난 토큰입니다.");
+			}
+			if (error instanceof JsonWebTokenError) {
+				throw new UnauthorizeException("권한이 없습니다.");
+			}
+			throw new Error("인증 실패");
+		}
+
+		return true;
+	},
+
+	/** 토큰 인증 */
+	refreshVerify: (token: string) => {
+		try {
+			jwt.verify(token, RefreshSecretKey, RefreshTokenoption);
 		} catch (error) {
 			console.log(error);
 			if (error instanceof TokenExpiredError) {
