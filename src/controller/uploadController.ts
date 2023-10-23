@@ -50,7 +50,7 @@ export const storeTempImage = async (
 		asyncDelete(path, id);
 
 		// 경로 리턴
-		return Created({ path, id, pathF });
+		return Created({ pathF });
 	} catch (error) {
 		console.log(error);
 		throw new InternalServerErrorException();
