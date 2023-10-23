@@ -34,7 +34,8 @@ const upload = multer({
 		},
 		filename: (req, file, callback) => {
 			const fileId = generate();
-			const fileName = `${fileId}`;
+			const fileExtension = file.mimetype.split("/")[1];
+			const fileName = `${fileId}.${fileExtension}`;
 
 			callback(null, fileName);
 		},
