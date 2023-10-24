@@ -3,7 +3,7 @@ import {
 	UnSupportedMediaTypeException,
 } from "../util/exception";
 import { fetchToDB } from "../util/jsonServerRequest";
-import { Created, CustomResponse } from "../util/response";
+import { Created, CustomResponse, NoContent } from "../util/response";
 import fs from "fs";
 
 const TIME_SET = 1 * 60 * 60 * 1000;
@@ -85,12 +85,18 @@ const asyncDelete = async (path: string, id: number) => {
 
 /** 스토리지 삭제 */
 export const deleteImagefromStorage = (paths: string[]) => {
-	paths.forEach((path) => {
-		const realPath = `../project_fukuoka-album-deployment-repo/public/${path}`;
-		try {
-			fs.unlinkSync(`${realPath}`);
-		} catch (error) {
-			console.log(error);
-		}
-	});
+	try {
+		paths.forEach((path) => {
+			const realPath = `../project_fukuoka-album-deployment-repo/public/${path}`;
+			try {
+				fs.unlinkSync(`${realPath}`);
+			} catch (error) {
+				console.log(error);
+			}
+		});
+		return NoContent();
+	} catch (error) {
+		console.log(error);
+		throw new InternalServerErrorException();
+	}
 };
