@@ -1,7 +1,11 @@
 import express, { Request, Response } from "express";
 import { singleUpload } from "../middleware/uploadMiddleware";
-import { storeTempImage } from "../controller/uploadController";
+import {
+	deleteImagefromStorage,
+	storeTempImage,
+} from "../controller/uploadController";
 import { asyncWrapper } from "../util/asyncWrapper";
+import { InternalServerErrorException } from "../util/exception";
 
 const router = express.Router();
 
@@ -18,5 +22,15 @@ export const Upload = () => {
 		})
 	);
 
+	router.delete(
+		"/delete",
+		asyncWrapper((req: Request, res: Response) => {
+			const images = req.body;
+
+			const result = deleteImagefromStorage(images);
+
+			res.status(result.statusCode).json(result.message);
+		})
+	);
 	return router;
 };

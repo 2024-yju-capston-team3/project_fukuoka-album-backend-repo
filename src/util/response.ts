@@ -18,3 +18,12 @@ export const Created = (
 	message,
 	data,
 });
+
+export const NoContent = (
+	data?: {},
+	message: string = "No Content"
+): CustomResponse => ({
+	statusCode: 204,
+	message,
+	data,
+});
