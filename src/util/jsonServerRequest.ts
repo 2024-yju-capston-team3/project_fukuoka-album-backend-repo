@@ -20,7 +20,7 @@ export const fetchToDB = (
 	body: object | null = null
 ) => {
 	const options = fetchOptions(method, body);
-	const jsonServerUrl = `http://localhost:3004/${endpoint}`;
+	const jsonServerUrl = `http://localhost:3300/${endpoint}`;
 
 	return fetch(jsonServerUrl, options);
 };
