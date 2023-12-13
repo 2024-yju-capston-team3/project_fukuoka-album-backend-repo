@@ -1,8 +1,8 @@
 import express, { Express } from "express";
 import { config } from "dotenv";
 import cors from "cors";
-import { routes } from "./routes/index";
 import morgan from "morgan";
+import { Upload } from "./routes/upload";
 config();
 
 const app: Express = express();
@@ -16,8 +16,7 @@ app.use(
 
 app.use(morgan("dev"));
 app.use(express.json());
-
-routes(app);
+app.use("/upload", Upload());
 
 app.listen(process.env.PORT, () => {
 	console.log(process.env.PORT);
