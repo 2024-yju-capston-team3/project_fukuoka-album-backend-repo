@@ -5,7 +5,6 @@ import {
 	storeTempImage,
 } from "../controller/uploadController";
 import { asyncWrapper } from "../util/asyncWrapper";
-import { InternalServerErrorException } from "../util/exception";
 
 const router = express.Router();
 
