@@ -20,7 +20,8 @@ export const fetchToDB = (
 	body: object | null = null
 ) => {
 	const options = fetchOptions(method, body);
-	const jsonServerUrl = `http://localhost:3300/${endpoint}`;
+	const port = process.env.JSON_SERVER_PORT || 3300;
+	const jsonServerUrl = `http://localhost:${port}/${endpoint}`;
 
 	return fetch(jsonServerUrl, options);
 };
